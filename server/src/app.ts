@@ -2,10 +2,8 @@ const express = require("express");
 const app = express();
 import { NextFunction, Response } from "express";
 import router from "./app/routers";
-import { connect } from "mongoose";
+import { connect, connection } from "mongoose";
 import bodyParser from "body-parser";
-
-run();
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,26 +15,23 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   .use(bodyParser.raw())
   .use(router);
 
-async function run() {
-  try {
-    await connect("mongodb://127.0.0.1:27017/")
-      .then(() => {
-        console.log(" ");
-        console.log("MongoDB connected successfully !");
-        console.log(" ");
+connect('mongodb://127.0.0.1:27017/blog');
 
-        app.listen(3001, () => {
-          console.log("======================================================");
-          console.log("|| Here you go your server is running at PORT: 3001 ||");
-          console.log("|| Check its health : http://localhost:3001/v1/ping ||");
-          console.log("======================================================");
-        });
+const db = connection;
 
-      })
-      .catch((error) =>
-        console.log("MongoDB connection error :- ", JSON.stringify(error))
-      );
-  } catch (error) {
-    throw error;
-  }
-}
+db.on('error', (error) => {
+  console.error('MongoDB connection error:', error);
+});
+
+db.once('open', () => {
+  console.log(" ");
+  console.log("MongoDB connected successfully !");
+  console.log(" ");
+
+  app.listen(3001, () => {
+    console.log("======================================================");
+    console.log("|| Here you go your server is running at PORT: 3001 ||");
+    console.log("|| Check its health : http://localhost:3001/v1/ping ||");
+    console.log("======================================================");
+  });
+});

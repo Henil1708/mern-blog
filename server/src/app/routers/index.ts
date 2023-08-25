@@ -9,10 +9,12 @@ router.get("/", (req: Request, res:any)=>{
 
 })
 
-router.get("/v1/ping", (req: Request, res: any) => {
+const commanPath = "/v1";
+
+router.get(commanPath+"/ping", (req: Request, res: any) => {
     res.send("Welcome to Henil's Blog")
 })
 
-router.use("/auth", auth)
+router.use(commanPath+"/auth", auth)
 
 export default router; 
