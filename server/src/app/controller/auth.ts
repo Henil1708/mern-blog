@@ -1,5 +1,6 @@
-import {Request, NextFunction} from "express";
+import {Request, NextFunction, Response} from "express";
 import register from "../services/authServices/register";
+import login from "../services/authServices/login";
 
 class AuthController {
    
@@ -8,15 +9,27 @@ class AuthController {
     || 🚩 @uses: controller for user login            
     || 🗓 @created: 24/08/2023 
     =============================*/
-    async login (req: Response, res: any, next: NextFunction){
+    async login(req:Request, res:any, next:NextFunction){
 
         try {
             
-            res.send("Hello there")
+            const container = {
+                input:{
+                    body: req.body
+                },
+                derived: {},
+                output: {
+                    message: ""
+                }
+            }
 
-        } catch (error) {
-            
-            throw error;
+            await login(container);
+
+            res.status(200).json(container.output);
+
+        } catch (error:any) {
+
+            res.status(error.status).json({...error, message: error.message});
 
         }
 
