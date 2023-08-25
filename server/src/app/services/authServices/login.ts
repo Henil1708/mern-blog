@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import User from "../../models/User";
 import hashHelper from "../../helpers/hashHelper";
+import jwt from 'jsonwebtoken';
 
 const login = async (container:any) => {
 
@@ -28,9 +29,16 @@ const login = async (container:any) => {
             throw error;
         }
 
+        container.output.data = {token:jwt.sign({
+            id: user._id
+        }, "thisismykeyprivateone")}
+
         container.output.message = "User Signed in successfully"
 
-    } catch (error) {
+    } catch (error:any) {
+        if(!error.status){
+            error.status = StatusCodes.INTERNAL_SERVER_ERROR;
+        }
         throw error;
     }
 

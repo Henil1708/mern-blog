@@ -28,7 +28,8 @@ class AuthController {
             res.status(200).json(container.output);
 
         } catch (error:any) {
-
+            console.log(JSON.stringify(error));
+            
             res.status(error.status).json({...error, message: error.message});
 
         }
